@@ -3,12 +3,104 @@ import { INVALID_MOVE } from "boardgame.io/core";
 export const TicTacToe = {
   //La función setup es la que va a inicializar el estado del juego que se denomina G.
   //Tambien puede recibir argumentos para deifinir el estado inicial de algo del context.
-  setup: () => ({ cells: Array(9).fill(null) }),
+  setup: () => ({
+    cells: Array(9).fill(null),
+    stadium: [
+      {
+        number: 2,
+        cells: Array(3).fill({
+          savePlayers: Array(4).fill(null),
+          actualPlayer: null
+        }),
+        isBlockByUsers: Array(4).fill(null)
+      },
+      {
+        number: 3,
+        cells: Array(5).fill({
+          savePlayers: Array(4).fill(null),
+          actualPlayer: null
+        }),
+        isBlockByUsers: Array(4).fill(null)
+      },
+      {
+        number: 4,
+        cells: Array(7).fill({
+          savePlayers: Array(4).fill(null),
+          actualPlayer: null
+        }),
+        isBlockByUsers: Array(4).fill(null)
+      },
+      {
+        number: 5,
+        cells: Array(9).fill({
+          savePlayers: Array(4).fill(null),
+          actualPlayer: null
+        }),
+        isBlockByUsers: Array(4).fill(null)
+      },
+      {
+        number: 6,
+        cells: Array(11).fill({
+          savePlayers: Array(4).fill(null),
+          actualPlayer: null
+        }),
+        isBlockByUsers: Array(4).fill(null)
+      },
+      {
+        number: 7,
+        cells: Array(13).fill({
+          savePlayers: Array(4).fill(null),
+          actualPlayer: null
+        }),
+        isBlockByUsers: Array(4).fill(null)
+      },
+      {
+        number: 8,
+        cells: Array(11).fill({
+          savePlayers: Array(4).fill(null),
+          actualPlayer: null
+        }),
+        isBlockByUsers: Array(4).fill(null)
+      },
+      {
+        number: 9,
+        cells: Array(9).fill({
+          savePlayers: Array(4).fill(null),
+          actualPlayer: null
+        }),
+        isBlockByUsers: Array(4).fill(null)
+      },
+      {
+        number: 10,
+        cells: Array(7).fill({
+          savePlayers: Array(4).fill(null),
+          actualPlayer: null
+        }),
+        isBlockByUsers: Array(4).fill(null)
+      },
+      {
+        number: 11,
+        cells: Array(5).fill({
+          savePlayers: Array(4).fill(null),
+          actualPlayer: null
+        }),
+        isBlockByUsers: Array(4).fill(null)
+      },
+      {
+        number: 12,
+        cells: Array(3).fill({
+          savePlayers: Array(4).fill(null),
+          actualPlayer: null
+        }),
+        isBlockByUsers: Array(4).fill(null)
+      }
+    ]
+  }),
   //Hay un objeto que controla los turnos.
-  turn: {
-    minMoves: 1,
-    maxMoves: 1
-  },
+  // turn: {
+  //   minMoves: 1,
+  //   maxMoves: 1
+  // },
   //Moves como dice su nombre, contine un objeto que tiene todos los movimientos del juego.
   moves: {
     //Cada movimiento es una función que recibe como primer parametro el estado del juego y un context.
@@ -18,6 +110,9 @@ export const TicTacToe = {
         return INVALID_MOVE;
       }
       G.cells[id] = playerID;
+    },
+    launchDice: ({ G, random }) => {
+      G.diceRoll = random.D6(4);
     }
   },
   endIf: ({ G, ctx }) => {

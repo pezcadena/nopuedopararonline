@@ -1,4 +1,5 @@
 import React from 'react';
+import { DiceCard } from './DiceCard';
 
 export function TicTacToeBoard({ ctx, G, moves }) {
   const onClick = (id) => moves.clickCell(id);
@@ -46,6 +47,7 @@ export function TicTacToeBoard({ ctx, G, moves }) {
         <tbody>{tbody}</tbody>
       </table>
       {winner}
+      <DiceCard G={G} moves={moves} ctx={ctx} />
     </main>
   )
 }
