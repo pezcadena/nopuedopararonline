@@ -41,6 +41,7 @@ export function TicTacToeBoard({ ctx, G, moves }) {
 
   return (
     <main>
+      <p className='font-bold text-3xl text-red-500'>GATO</p>
       <table id='board'>
         <tbody>{tbody}</tbody>
       </table>
