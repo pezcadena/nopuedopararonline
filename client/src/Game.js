@@ -7,6 +7,7 @@ function createRow(number) {
     usersSaveIndex: Array(4).fill(null),
     isBlockByUsers: Array(4).fill(null),
     currentMove: 0,
+    isBlockByUser: null,
   };
 }
 
@@ -34,6 +35,7 @@ export const TicTacToe = {
     stadium: createStadium(),
     isDiceRoll: false,
     currentMoves: 0,
+    noMoreMoves: false,
   }),
   //Hay un objeto que controla los turnos.
   // turn: {
@@ -53,6 +55,7 @@ export const TicTacToe = {
     launchDice: ({ G, random }) => {
       G.diceRoll = random.D6(4);
       G.isDiceRoll = true;
+      G.noMoreMoves = validatePosibleMoves(G, G.diceRoll);
     },
     setMoves: ({ G }, moves) => {
       G.isDiceRoll = false;
@@ -80,6 +83,24 @@ export const TicTacToe = {
     }
   },
 };
+
+function validatePosibleMoves(G, diceRoll) {
+  const possibleMoves = [
+    diceRoll[0] + diceRoll[1],
+    diceRoll[0] + diceRoll[2],
+    diceRoll[0] + diceRoll[3],
+    diceRoll[1] + diceRoll[2],
+    diceRoll[1] + diceRoll[3],
+  ];
+  let noMoreMoves = true;
+  possibleMoves.map((possibleMove) => {
+    const row = G.stadium.find((row) => row.number === possibleMove);
+    if (row.currentMove > 0 && G.currentMoves < 3) {
+      noMoreMoves = false;
+    }
+  });
+  return noMoreMoves;
+}
 
 function IsVictory(cells) {
   const positions = [

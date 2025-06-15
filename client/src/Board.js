@@ -25,11 +25,11 @@ export function TicTacToeBoard({ ctx, G, moves }) {
   let tbody = [];
   for (let i = 0; i < G.stadium.length; i++) {
     let cells = [];
-    for (let j = 0; j < G.stadium[i].totalCells; j++) {
+    for (let j = 0; j < G.stadium[i].totalCells + 1; j++) {
       cells.push(
         <td key={j}>
           <div style={cellStyle}>
-            {G.stadium[i].currentMove === j + 1 ? "X" : ""}
+            {j === 0 ? i + 2 : G.stadium[i].currentMove === j ? "X" : ""}
           </div>
         </td>,
       );
