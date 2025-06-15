@@ -3,9 +3,10 @@ import { INVALID_MOVE } from "boardgame.io/core";
 function createRow(number) {
   return {
     number,
-    totalCells:obtenerValor(number),
+    totalCells: obtenerValor(number),
     usersSaveIndex: Array(4).fill(null),
-    isBlockByUsers: Array(4).fill(null)
+    isBlockByUsers: Array(4).fill(null),
+    currentMove: 0
   }
 }
 
@@ -52,6 +53,16 @@ export const TicTacToe = {
     launchDice: ({ G, random }) => {
       G.diceRoll = random.D6(4);
       G.isDiceRoll = true;
+    },
+    setMoves: ({ G }, moves) => {
+      G.isDiceRoll = false;
+      G.diceRoll = undefined;
+      moves?.map(move => {
+        const indexOfCell = G.stadium.findIndex((row) => row.number === move);
+        if (indexOfCell >= 0) {
+          G.stadium[indexOfCell].currentMove = G.stadium[indexOfCell].currentMove + 1;
+        }
+      })
     }
   },
   endIf: ({ G, ctx }) => {

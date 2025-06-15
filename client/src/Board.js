@@ -23,17 +23,12 @@ export function TicTacToeBoard({ ctx, G, moves }) {
   };
 
   let tbody = [];
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < G.stadium.length; i++) {
     let cells = [];
-    for (let j = 0; j < 3; j++) {
-      const id = 3 * i + j;
+    for (let j = 0; j < G.stadium[i].totalCells; j++) {
       cells.push(
-        <td key={id}>
-          {G.cells[id] ? (
-            <div style={cellStyle}>{G.cells[id]}</div>
-          ) : (
-            <button style={cellStyle} onClick={() => onClick(id)} />
-          )}
+        <td key={j}>
+          <div style={cellStyle}>{G.stadium[i].currentMove === (j + 1) ? 'X' : ''}</div>
         </td>
       );
     }
