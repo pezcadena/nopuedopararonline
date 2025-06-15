@@ -6,8 +6,8 @@ function createRow(number) {
     totalCells: obtenerValor(number),
     usersSaveIndex: Array(4).fill(null),
     isBlockByUsers: Array(4).fill(null),
-    currentMove: 0
-  }
+    currentMove: 0,
+  };
 }
 
 function createStadium() {
@@ -26,7 +26,6 @@ function obtenerValor(n) {
   }
 }
 
-
 export const TicTacToe = {
   //La función setup es la que va a inicializar el estado del juego que se denomina G.
   //Tambien puede recibir argumentos para deifinir el estado inicial de algo del context.
@@ -34,6 +33,7 @@ export const TicTacToe = {
     cells: Array(9).fill(null),
     stadium: createStadium(),
     isDiceRoll: false,
+    currentMoves: 0,
   }),
   //Hay un objeto que controla los turnos.
   // turn: {
@@ -57,13 +57,19 @@ export const TicTacToe = {
     setMoves: ({ G }, moves) => {
       G.isDiceRoll = false;
       G.diceRoll = undefined;
-      moves?.map(move => {
+      moves?.map((move) => {
         const indexOfCell = G.stadium.findIndex((row) => row.number === move);
         if (indexOfCell >= 0) {
-          G.stadium[indexOfCell].currentMove = G.stadium[indexOfCell].currentMove + 1;
+          if (G.currentMoves < 3 || G.stadium[indexOfCell].currentMove > 0) {
+            if (G.stadium[indexOfCell].currentMove === 0) {
+              G.currentMoves = G.currentMoves + 1;
+            }
+            G.stadium[indexOfCell].currentMove =
+              G.stadium[indexOfCell].currentMove + 1;
+          }
         }
-      })
-    }
+      });
+    },
   },
   endIf: ({ G, ctx }) => {
     if (IsVictory(G.cells)) {
@@ -72,23 +78,29 @@ export const TicTacToe = {
     if (isDraw(G.cells)) {
       return { draw: true };
     }
-  }
-}
+  },
+};
 
 function IsVictory(cells) {
   const positions = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6],
-    [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
   ];
 
-  const isRowComplete = row => {
-    const symbols = row.map(i => cells[i]);
-    return symbols.every(i => i !== null && i === symbols[0]);
+  const isRowComplete = (row) => {
+    const symbols = row.map((i) => cells[i]);
+    return symbols.every((i) => i !== null && i === symbols[0]);
   };
 
-  return positions.map(isRowComplete).some(i => i === true);
+  return positions.map(isRowComplete).some((i) => i === true);
 }
 
 function isDraw(cells) {
-  return cells.filter(c => c === null).length === 0;
+  return cells.filter((c) => c === null).length === 0;
 }
