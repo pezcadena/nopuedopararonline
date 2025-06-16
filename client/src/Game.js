@@ -85,6 +85,9 @@ export const TicTacToe = {
 };
 
 function validatePosibleMoves(G, diceRoll) {
+  if (G.currentMoves < 3) {
+    return false;
+  }
   const possibleMoves = [
     diceRoll[0] + diceRoll[1],
     diceRoll[0] + diceRoll[2],
@@ -95,7 +98,7 @@ function validatePosibleMoves(G, diceRoll) {
   let noMoreMoves = true;
   possibleMoves.map((possibleMove) => {
     const row = G.stadium.find((row) => row.number === possibleMove);
-    if (row.currentMove > 0 && G.currentMoves < 3) {
+    if (row.currentMove > 0 || G.currentMoves < 3) {
       noMoreMoves = false;
     }
   });
