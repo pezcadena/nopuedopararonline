@@ -8,6 +8,7 @@ function createRow(number) {
     isBlockByUsers: Array(4).fill(null),
     currentMove: 0,
     isBlockByUser: null,
+    indexOfLastSave: 0,
   };
 }
 
@@ -52,23 +53,29 @@ export const TicTacToe = {
       }
       G.cells[id] = playerID;
     },
-    launchDice: ({ G, random }) => {
+    launchDice: ({ G, random, playerID }) => {
       G.diceRoll = random.D6(4);
       G.isDiceRoll = true;
-      G.noMoreMoves = validatePosibleMoves(G, G.diceRoll);
+      G.noMoreMoves = validatePosibleMoves(G, G.diceRoll, playerID);
     },
-    setMoves: ({ G }, moves) => {
+    setMoves: ({ G, playerID }, moves) => {
       G.isDiceRoll = false;
       G.diceRoll = undefined;
       moves?.map((move) => {
         const indexOfCell = G.stadium.findIndex((row) => row.number === move);
+        const row = G.stadium[indexOfCell];
+        if (row.isBlockByUser === playerID) {
+          return;
+        }
         if (indexOfCell >= 0) {
-          if (G.currentMoves < 3 || G.stadium[indexOfCell].currentMove > 0) {
-            if (G.stadium[indexOfCell].currentMove === 0) {
+          if (G.currentMoves < 3 || row.currentMove > 0) {
+            if (row.currentMove === 0) {
               G.currentMoves = G.currentMoves + 1;
             }
-            G.stadium[indexOfCell].currentMove =
-              G.stadium[indexOfCell].currentMove + 1;
+            row.currentMove = row.currentMove + 1;
+            if (row.indexOfLastSave + row.currentMove === row.totalCells) {
+              row.isBlockByUser = playerID;
+            }
           }
         }
       });
@@ -84,10 +91,7 @@ export const TicTacToe = {
   },
 };
 
-function validatePosibleMoves(G, diceRoll) {
-  if (G.currentMoves < 3) {
-    return false;
-  }
+function validatePosibleMoves(G, diceRoll, playerID) {
   const possibleMoves = [
     diceRoll[0] + diceRoll[1],
     diceRoll[0] + diceRoll[2],
@@ -98,7 +102,10 @@ function validatePosibleMoves(G, diceRoll) {
   let noMoreMoves = true;
   possibleMoves.map((possibleMove) => {
     const row = G.stadium.find((row) => row.number === possibleMove);
-    if (row.currentMove > 0 || G.currentMoves < 3) {
+    if (
+      (row.currentMove > 0 || G.currentMoves < 3) &&
+      playerID !== row.isBlockByUser
+    ) {
       noMoreMoves = false;
     }
   });
