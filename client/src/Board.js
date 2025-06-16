@@ -2,7 +2,8 @@ import React from "react";
 import { DiceCard } from "./DiceCard";
 
 export function TicTacToeBoard({ ctx, G, moves }) {
-  const onClick = (id) => moves.clickCell(id);
+  const onClick = () => moves.stopTurn();
+  const playerID = ctx.currentPlayer;
 
   let winner = "";
   if (ctx.gameover) {
@@ -29,7 +30,16 @@ export function TicTacToeBoard({ ctx, G, moves }) {
       cells.push(
         <td key={j}>
           <div style={cellStyle}>
-            {j === 0 ? i + 2 : G.stadium[i].currentMove === j ? "X" : ""}
+            {j === 0
+              ? i + 2
+              : G.stadium[i].currentMove === j
+                ? "X"
+                : G.stadium[i].saveByUserList.map((save) => {
+                    if (save?.index === j) {
+                      return save.playerID;
+                    }
+                    return "";
+                  })}
           </div>
         </td>,
       );
@@ -42,8 +52,15 @@ export function TicTacToeBoard({ ctx, G, moves }) {
       <table id="board">
         <tbody>{tbody}</tbody>
       </table>
-      {winner}
       <DiceCard G={G} moves={moves} ctx={ctx} />
+      {((G.canStop && !G.isDiceRoll) || G.noMoreMoves) && (
+        <button
+          className="p-4 bg-green-500 rounded text-white hover:bg-green-600"
+          onClick={onClick}
+        >
+          {G.noMoreMoves ? "Finalizar Turno" : "PARAR"}
+        </button>
+      )}
     </main>
   );
 }

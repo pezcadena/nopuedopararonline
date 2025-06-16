@@ -4,11 +4,10 @@ function createRow(number) {
   return {
     number,
     totalCells: obtenerValor(number),
-    usersSaveIndex: Array(4).fill(null),
+    saveByUserList: Array(4).fill(null),
     isBlockByUsers: Array(4).fill(null),
     currentMove: 0,
     isBlockByUser: null,
-    indexOfLastSave: 0,
   };
 }
 
@@ -37,6 +36,7 @@ export const TicTacToe = {
     isDiceRoll: false,
     currentMoves: 0,
     noMoreMoves: false,
+    canStop: false,
   }),
   //Hay un objeto que controla los turnos.
   // turn: {
@@ -64,21 +64,56 @@ export const TicTacToe = {
       moves?.map((move) => {
         const indexOfCell = G.stadium.findIndex((row) => row.number === move);
         const row = G.stadium[indexOfCell];
-        if (row.isBlockByUser === playerID) {
+        let indexOfLastSave = row.saveByUserList.find(
+          (save) => save?.playerID === playerID,
+        )?.index;
+        if (indexOfLastSave && row.currentMove === 0) {
+          row.currentMove = indexOfLastSave - 1;
+        }
+        if (row.isBlockByUser) {
           return;
         }
         if (indexOfCell >= 0) {
           if (G.currentMoves < 3 || row.currentMove > 0) {
-            if (row.currentMove === 0) {
+            if (
+              row.currentMove === 0 ||
+              indexOfLastSave === row.currentMove + 1
+            ) {
               G.currentMoves = G.currentMoves + 1;
             }
-            row.currentMove = row.currentMove + 1;
-            if (row.indexOfLastSave + row.currentMove === row.totalCells) {
+            row.currentMove = 1 + row.currentMove;
+            if (row.currentMove === row.totalCells) {
               row.isBlockByUser = playerID;
             }
           }
         }
       });
+      G.canStop = CanStop(G);
+    },
+    stopTurn: ({ G, playerID, events }) => {
+      G.stadium.map((row) => {
+        if (row.currentMove > 1 && !G.noMoreMoves) {
+          const already = row.saveByUserList.find(
+            (save) => save?.playerID === playerID,
+          );
+          if (already) {
+            already.index = already.index + row.currentMove;
+          }
+          row.saveByUserList[playerID] = {
+            playerID,
+            index: row.currentMove,
+          };
+        }
+        if (row.currentMove > 0) {
+          row.currentMove = 0;
+        }
+      });
+      G.canStop = false;
+      G.currentMoves = 0;
+      G.isDiceRoll = false;
+      G.diceRoll = undefined;
+      G.noMoreMoves = false;
+      events.endTurn();
     },
   },
   endIf: ({ G, ctx }) => {
@@ -110,6 +145,14 @@ function validatePosibleMoves(G, diceRoll, playerID) {
     }
   });
   return noMoreMoves;
+}
+
+function CanStop(G) {
+  const isAnyMoreThanOne = G.stadium.find((row) => row.currentMove > 1) ?? null;
+  if (isAnyMoreThanOne && G.currentMoves === 3) {
+    return true;
+  }
+  return false;
 }
 
 function IsVictory(cells) {

@@ -118,15 +118,35 @@ export function DiceCard({ ctx, G, moves }) {
           </div>
         )}
       </div>
-      {isDiceRoll && (
-        <button
-          className="p-4 bg-red-500 rounded text-white hover:bg-red-600"
-          onClick={setMoves}
-        >
-          Aceptar dados
-        </button>
-      )}
+      {isDiceRoll &&
+        selectedDice[3]?.value > 0 &&
+        !G.noMoreMoves &&
+        validateSetMoves(selectedDice, G.stadium, G.currentMoves) && (
+          <button
+            className="p-4 bg-red-500 rounded text-white hover:bg-red-600"
+            onClick={setMoves}
+          >
+            Aceptar dados
+          </button>
+        )}
       {G.noMoreMoves && <div>Valiste</div>}
     </div>
   );
+}
+
+function validateSetMoves(selectedDice, stadium, currentMoves) {
+  if (currentMoves < 3) {
+    return true;
+  }
+  let isValid = false;
+  const value1 = selectedDice[0]?.value + selectedDice[1]?.value;
+  const value2 = selectedDice[2]?.value + selectedDice[3]?.value;
+  stadium.map((row) => {
+    if (row.number === value1 || row.number === value2) {
+      if (row.currentMove > 0) {
+        isValid = true;
+      }
+    }
+  });
+  return isValid;
 }
