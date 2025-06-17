@@ -64,25 +64,25 @@ export const TicTacToe = {
       moves?.map((move) => {
         const indexOfCell = G.stadium.findIndex((row) => row.number === move);
         const row = G.stadium[indexOfCell];
-        let indexOfLastSave = row.saveByUserList.find(
-          (save) => save?.playerID === playerID,
-        )?.index;
-        if (indexOfLastSave && row.currentMove === 0) {
-          row.currentMove = indexOfLastSave - 1;
-        }
+        let indexOfLastSave =
+          row.saveByUserList.find((save) => save?.playerID === playerID)
+            ?.index - 1;
+        // if (indexOfLastSave && row.currentMove === 0) {
+        //   row.currentMove = indexOfLastSave - 1;
+        // }
         if (row.isBlockByUser) {
           return;
         }
         if (indexOfCell >= 0) {
           if (G.currentMoves < 3 || row.currentMove > 0) {
             if (
-              row.currentMove === 0 ||
-              indexOfLastSave === row.currentMove + 1
+              row.currentMove === 0 //||
+              //indexOfLastSave === row.currentMove + 1
             ) {
               G.currentMoves = G.currentMoves + 1;
             }
             row.currentMove = 1 + row.currentMove;
-            if (row.currentMove === row.totalCells) {
+            if (row.currentMove + indexOfLastSave === row.totalCells) {
               row.isBlockByUser = playerID;
             }
           }
@@ -97,12 +97,13 @@ export const TicTacToe = {
             (save) => save?.playerID === playerID,
           );
           if (already) {
-            already.index = already.index + row.currentMove;
+            already.index = already.index + row.currentMove - 1;
+          } else {
+            row.saveByUserList[playerID] = {
+              playerID,
+              index: row.currentMove,
+            };
           }
-          row.saveByUserList[playerID] = {
-            playerID,
-            index: row.currentMove,
-          };
         }
         if (row.currentMove > 0) {
           row.currentMove = 0;

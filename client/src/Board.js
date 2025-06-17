@@ -32,14 +32,20 @@ export function TicTacToeBoard({ ctx, G, moves }) {
           <div style={cellStyle}>
             {j === 0
               ? i + 2
-              : G.stadium[i].currentMove === j
+              : G.stadium[i].currentMove + (
+                G.stadium[i].currentMove > 0 ?
+                  getIndexOfLastSave(
+                    G.stadium[i].saveByUserList,
+                    playerID,
+                  ) : 0) ===
+                j
                 ? "X"
                 : G.stadium[i].saveByUserList.map((save) => {
-                    if (save?.index === j) {
-                      return save.playerID;
-                    }
-                    return "";
-                  })}
+                  if (save?.index === j) {
+                    return save.playerID;
+                  }
+                  return "";
+                })}
           </div>
         </td>,
       );
@@ -63,4 +69,11 @@ export function TicTacToeBoard({ ctx, G, moves }) {
       )}
     </main>
   );
+}
+
+function getIndexOfLastSave(saveByUserList, playerID) {
+  const indexOfLastSave = saveByUserList.find(
+    (save) => save?.playerID === playerID,
+  )?.index;
+  return indexOfLastSave ? indexOfLastSave - 1 : 0;
 }
