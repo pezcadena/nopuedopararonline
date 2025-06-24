@@ -1,9 +1,9 @@
 import { Client } from 'boardgame.io/react';
 import { TicTacToeBoard } from './Board.js';
-import { TicTacToe } from "./Game.js";
+import { CantStop } from "./Game.tsx";
 
 const App = Client({
-  game: TicTacToe,
+  game: CantStop,
   board: TicTacToeBoard
 });
 
